@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>动物灵魂原型测试</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .intro {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+            color: #555;
+        }
+        
+        .question-container {
+            margin-bottom: 30px;
+        }
+        
+        .question {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            font-weight: bold;
+            color: #444;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .option {
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f9f9f9;
+        }
+        
+        .option:hover {
+            border-color: #6a11cb;
+            background: #f0f0f0;
+        }
+        
+        .option.selected {
+            border-color: #6a11cb;
+            background: #e6f0ff;
+        }
+        
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .result-container {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .animal-name {
+            font-size: 2.5rem;
+            color: #6a11cb;
+            margin: 20px 0;
+        }
+        
+        .animal-image {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin: 20px auto;
+            border: 5px solid #6a11cb;
+        }
+        
+        .animal-description {
+            text-align: left;
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            line-height: 1.8;
+        }
+        
+        .traits {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .trait {
+            background: #e6f0ff;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            width: 0%;
+            transition: width 0.5s;
+        }
+        
+        .question-counter {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #666;
+        }
+        
+        .restart-btn {
+            background: #4CAF50;
+            margin-top: 10px;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                border-radius: 10px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .animal-image {
+                width: 150px;
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>动物灵魂原型测试</h1>
+            <p class="subtitle">探索你内心深处的动物本性</p>
+        </header>
+        
+        <div class="content">
+            <div id="intro-section">
+                <div class="intro">
+                    <p>在每个人的灵魂深处，都沉睡着一个古老的动物原型。它塑造着你的本能、你的魅力，甚至是你自己都未察觉的隐藏天赋。</p>
+                    <p>完成这份灵魂问卷，只需回答15个问题，唤醒你的原始力量，看看是哪位"动物守护灵"一直与你同在。</p>
+                </div>
+                <button id="start-btn" class="btn">开始测试</button>
+            </div>
+            
+            <div id="test-section" style="display: none;">
+                <div class="question-counter">问题 <span id="current-question">1</span>/15</div>
+                <div class="progress-bar">
+                    <div class="progress" id="progress-bar"></div>
+                </div>
+                
+                <div class="question-container">
+                    <div class="question" id="question-text"></div>
+                    <div class="options" id="options-container"></div>
+                </div>
+                
+                <button id="next-btn" class="btn" disabled>下一题</button>
+            </div>
+            
+            <div id="result-section" class="result-container">
+                <h2>你的动物灵魂原型是：</h2>
+                <div class="animal-name" id="result-name"></div>
+                <img class="animal-image" id="result-image" src="" alt="动物图片">
+                <div class="traits" id="result-traits"></div>
+                <div class="animal-description" id="result-description"></div>
+                <button id="restart-btn" class="btn restart-btn">重新测试</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 测试题目
+        const questions = [
+            {
+                text: "周末早晨，天气极好，你第一件想做的事是？",
+                options: [
+                    { text: "约朋友去户外爬山、骑行或打球。", scores: { social: 2, energy: 2, mind: 0, risk: 1, environment: 1 } },
+                    { text: "一个人去公园、博物馆或市场逛逛，享受独处时光。", scores: { social: -1, energy: 1, mind: 0, risk: 0, environment: 0 } },
+                    { text: "继续赖床，或者窝在沙发里悠闲地吃早餐、刷手机。", scores: { social: -1, energy: -1, mind: 0, risk: -1, environment: -1 } },
+                    { text: "立刻开始执行早已制定好的周末计划。", scores: { social: 0, energy: 1, mind: 1, risk: 0, environment: 1 } }
+                ]
+            },
+            {
+                text: "你的办公桌或书桌通常是怎样的状态？",
+                options: [
+                    { text: "整洁有序，每样东西都有固定位置。", scores: { social: 0, energy: 0, mind: 1, risk: -1, environment: 1 } },
+                    { text: "堆满了东西，但我清楚每一样在哪，这是一种充满创意的'乱'。", scores: { social: 0, energy: 0, mind: -1, risk: 1, environment: -1 } },
+                    { text: "会放一些家人、朋友或宠物的照片，感觉很温馨。", scores: { social: 1, energy: 0, mind: -1, risk: 0, environment: 0 } },
+                    { text: "极简风格，只放当前必需的物品。", scores: { social: -1, energy: 0, mind: 1, risk: 0, environment: 0 } }
+                ]
+            },
+            {
+                text: "当你感到压力巨大时，什么最能治愈你？",
+                options: [
+                    { text: "找朋友倾诉，或参加热闹的社交活动。", scores: { social: 2, energy: 0, mind: -1, risk: 0, environment: 0 } },
+                    { text: "一个人呆着，通过看书、听音乐或独处来充电。", scores: { social: -2, energy: -1, mind: 0, risk: 0, environment: -1 } },
+                    { text: "投入大自然的怀抱，去爬山、看海或森林浴。", scores: { social: -1, energy: 1, mind: 0, risk: 1, environment: 0 } },
+                    { text: "通过剧烈运动，比如跑步、健身，来释放压力。", scores: { social: 0, energy: 2, mind: 0, risk: 1, environment: 1 } }
+                ]
+            },
+            {
+                text: "旅行前，你会如何做计划？",
+                options: [
+                    { text: "做好详尽的攻略，时间地点精确到小时，不喜欢意外。", scores: { social: 0, energy: 0, mind: 2, risk: -2, environment: 1 } },
+                    { text: "只定大框架，留出大量时间用于随性探索和发现。", scores: { social: 0, energy: 0, mind: -1, risk: 1, environment: 0 } },
+                    { text: "更倾向于和朋友一起，他们定就好，我负责跟随和享受。", scores: { social: 1, energy: -1, mind: -1, risk: 0, environment: -1 } },
+                    { text: "偏爱挑战性的旅程，如徒步、探险，并乐于自己做主。", scores: { social: 0, energy: 1, mind: 0, risk: 2, environment: 1 } }
+                ]
+            },
+            {
+                text: "在社交聚会中，你通常更像：",
+                options: [
+                    { text: "气氛担当，活跃在人群中央，享受被关注。", scores: { social: 2, energy: 1, mind: 0, risk: 1, environment: 1 } },
+                    { text: "深度交流者，只和一两个人进行有意义的谈话。", scores: { social: 0, energy: 0, mind: 0, risk: 0, environment: 0 } },
+                    { text: "观察者，安静地待在角落，看着大家，自得其乐。", scores: { social: -1, energy: -1, mind: 1, risk: -1, environment: -1 } },
+                    { text: "组织者，操心着大家的饮料和情绪，确保没人被冷落。", scores: { social: 1, energy: 0, mind: 1, risk: 0, environment: 1 } }
+                ]
+            },
+            {
+                text: "你更偏爱哪种天气？",
+                options: [
+                    { text: "阳光明媚，温暖甚至炎热的大晴天。", scores: { social: 0, energy: 1, mind: 0, risk: 0, environment: 0 } },
+                    { text: "凉爽的阴天，或者细雨绵绵的日子。", scores: { social: 0, energy: -1, mind: 0, risk: 0, environment: 0 } },
+                    { text: "大雪纷飞，享受室内的温暖与静谧。", scores: { social: -1, energy: -1, mind: 0, risk: -1, environment: -1 } },
+                    { text: "狂风暴雨，喜欢那种能量释放的感觉。", scores: { social: 0, energy: 1, mind: 0, risk: 1, environment: 0 } }
+                ]
+            },
+            {
+                text: "你如何处理一个突如其来的难题？",
+                options: [
+                    { text: "立即行动，在尝试中不断调整方案。", scores: { social: 0, energy: 1, mind: -1, risk: 1, environment: 1 } },
+                    { text: "先冷静下来，系统地分析利弊，找出最优解。", scores: { social: 0, energy: 0, mind: 2, risk: -1, environment: 1 } },
+                    { text: "寻求专家或朋友的建议，集思广益。", scores: { social: 1, energy: 0, mind: 0, risk: 0, environment: 0 } },
+                    { text: "相信自己的直觉和感觉，跟着'心'走。", scores: { social: 0, energy: 0, mind: -1, risk: 0, environment: -1 } }
+                ]
+            },
+            {
+                text: "关于'家'的概念，你最认同以下哪种描述？",
+                options: [
+                    { text: "一个安全的堡垒，完全属于我自己，隔绝外界干扰。", scores: { social: -2, energy: -1, mind: 0, risk: -1, environment: -1 } },
+                    { text: "一个热闹的社交中心，欢迎朋友常来常往。", scores: { social: 2, energy: 1, mind: 0, risk: 0, environment: 1 } },
+                    { text: "一个温暖的港湾，是与家人共享爱与陪伴的地方。", scores: { social: 1, energy: 0, mind: -1, risk: 0, environment: 0 } },
+                    { text: "一个休息站，更重要的是外面的广阔世界。", scores: { social: -1, energy: 1, mind: 0, risk: 1, environment: 0 } }
+                ]
+            },
+            {
+                text: "你更享受哪种类型的假期？",
+                options: [
+                    { text: "在热带海滩上躺着晒太阳，彻底放松。", scores: { social: 0, energy: -2, mind: 0, risk: -1, environment: -1 } },
+                    { text: "穿梭于各大城市，逛遍博物馆、古迹和商场。", scores: { social: 0, energy: 1, mind: 1, risk: 0, environment: 0 } },
+                    { text: "去野生动物园或自然保护区，观察动物。", scores: { social: -1, energy: 0, mind: 1, risk: 0, environment: 0 } },
+                    { text: "参加徒步、露营、滑雪等户外运动假期。", scores: { social: 0, energy: 2, mind: 0, risk: 1, environment: 1 } }
+                ]
+            },
+            {
+                text: "你的消费习惯更接近？",
+                options: [
+                    { text: "有计划地储蓄和消费，对投资理财很感兴趣。", scores: { social: 0, energy: 0, mind: 2, risk: -1, environment: 1 } },
+                    { text: "注重体验，愿意为美食、旅行和爱好花钱。", scores: { social: 0, energy: 0, mind: -1, risk: 1, environment: 0 } },
+                    { text: "乐于为朋友和家人买单，看到他们开心我就开心。", scores: { social: 1, energy: 0, mind: -1, risk: 0, environment: 0 } },
+                    { text: "实用主义，只买需要的，很少冲动消费。", scores: { social: 0, energy: 0, mind: 1, risk: -1, environment: 0 } }
+                ]
+            },
+            {
+                text: "你如何看待规则？",
+                options: [
+                    { text: "规则是用来遵守的，它们让世界更有秩序。", scores: { social: 0, energy: 0, mind: 1, risk: -1, environment: 1 } },
+                    { text: "规则是用来打破的，创新往往发生在框架之外。", scores: { social: 0, energy: 1, mind: 0, risk: 2, environment: 0 } },
+                    { text: "规则是参考，我更关心规则背后的人情与情境。", scores: { social: 0, energy: 0, mind: -1, risk: 0, environment: 0 } },
+                    { text: "只要不影响到我和我在意的人，我并不太关心规则。", scores: { social: -1, energy: 0, mind: 0, risk: 0, environment: -1 } }
+                ]
+            },
+            {
+                text: "你一天中精力最充沛的时间段是？",
+                options: [
+                    { text: "清晨，醒来就充满活力。", scores: { social: 0, energy: 1, mind: 0, risk: 0, environment: 0 } },
+                    { text: "深夜，万籁俱寂时思维最清晰。", scores: { social: -1, energy: 0, mind: 1, risk: 0, environment: -1 } },
+                    { text: "下午到傍晚，需要一个缓慢的启动过程。", scores: { social: 0, energy: 0, mind: 0, risk: 0, environment: 0 } },
+                    { text: "不固定，像猫一样可以随时充电小睡。", scores: { social: 0, energy: -1, mind: 0, risk: 0, environment: 0 } }
+                ]
+            },
+            {
+                text: "朋友对你最可能的评价是？",
+                options: [
+                    { text: "'靠谱/稳重，像定心丸一样的存在。'", scores: { social: 0, energy: 0, mind: 1, risk: -1, environment: 1 } },
+                    { text: "'有趣/有想法，总能看到不一样的角度。'", scores: { social: 0, energy: 0, mind: 1, risk: 1, environment: 0 } },
+                    { text: "'温暖/贴心，像小太阳一样治愈。'", scores: { social: 1, energy: 0, mind: -1, risk: 0, environment: 0 } },
+                    { text: "'独立/强大，有自己的一个小世界。'", scores: { social: -1, energy: 0, mind: 0, risk: 0, environment: -1 } }
+                ]
+            },
+            {
+                text: "面对一个你非常想要的机会，但竞争激烈，你会？",
+                options: [
+                    { text: "全力以赴，积极准备，志在必得。", scores: { social: 0, energy: 2, mind: 0, risk: 2, environment: 1 } },
+                    { text: "仔细评估胜算，如果太低就可能放弃。", scores: { social: 0, energy: 0, mind: 1, risk: -1, environment: 0 } },
+                    { text: "寻求合作，看看能否和他人组队争取。", scores: { social: 1, energy: 0, mind: 0, risk: 0, environment: 0 } },
+                    { text: "顺其自然，相信'是我的就是我的'。", scores: { social: 0, energy: -1, mind: 0, risk: -1, environment: -1 } }
+                ]
+            },
+            {
+                text: "如果变成动物，你内心最渴望拥有的是？",
+                options: [
+                    { text: "鹰击长空的自由和俯瞰一切的视野。", scores: { social: -1, energy: 1, mind: 1, risk: 1, environment: 1 } },
+                    { text: "狮群中相互依偎的温暖和强大的力量。", scores: { social: 2, energy: 1, mind: 0, risk: 0, environment: 1 } },
+                    { text: "狐狸般的机智敏捷和优雅神秘的魅力。", scores: { social: 0, energy: 0, mind: 1, risk: 0, environment: 0 } },
+                    { text: "熊猫般的与世无争，被安稳照顾的惬意。", scores: { social: -1, energy: -2, mind: -1, risk: -2, environment: -1 } }
+                ]
+            }
+        ];
+
+        // 动物数据库
+        const animals = [
+            {
+                name: "狼",
+                traits: ["忠诚", "协作", "纪律性", "团队精神"],
+                description: "你的灵魂原型是狼！你重视团队和家庭，拥有强大的忠诚度和协作精神。在群体中，你既可以是坚定的支持者，也可以是强有力的领导者。你的直觉敏锐，能够感知群体的情绪和动态。虽然你享受群体的温暖，但也保持着独立的思考和行动能力。",
+                image: "🐺",
+                scores: { social: 5, energy: 4, mind: 3, risk: 3, environment: 4 }
+            },
+            {
+                name: "猫头鹰",
+                traits: ["智慧", "理性", "观察力", "沉静"],
+                description: "你的灵魂原型是猫头鹰！你是一个深思熟虑的观察者，拥有超凡的智慧和洞察力。在寂静的深夜，你的思维最为清晰，能够看透问题的本质。你重视知识和理性，不轻易被情绪左右。虽然你看起来有些孤僻，但实际上你只是享受独处时的深度思考。",
+                image: "🦉",
+                scores: { social: 2, energy: 2, mind: 5, risk: 2, environment: 2 }
+            },
+            {
+                name: "海豚",
+                traits: ["智慧", "友好", "爱玩", "高度社交"],
+                description: "你的灵魂原型是海豚！你聪明、友好且充满活力，是群体中的开心果。你热爱社交，擅长沟通，能够轻松地与各种人建立联系。你的好奇心强，喜欢探索新事物，并且总是带着乐观和玩乐的心态面对生活。你的智慧和适应能力让你在各种环境中都能游刃有余。",
+                image: "🐬",
+                scores: { social: 5, energy: 4, mind: 4, risk: 2, environment: 3 }
+            },
+            {
+                name: "狐狸",
+                traits: ["机智", "适应力", "好奇心", "独立"],
+                description: "你的灵魂原型是狐狸！你机智敏捷，适应力强，总能在复杂的环境中找到最优解。你拥有敏锐的观察力和快速学习的能力，能够迅速适应变化。你的好奇心驱使你不断探索新领域，而你的独立性让你不依赖他人也能取得成功。你或许不爱站在聚光灯下，但一切都在你的算计和观察之中。",
+                image: "🦊",
+                scores: { social: 1, energy: 3, mind: 4, risk: 3, environment: 2 }
+            },
+            {
+                name: "鹰",
+                traits: ["远见", "自由", "权力", "洞察力"],
+                description: "你的灵魂原型是鹰！你拥有超凡的远见和洞察力，总是能够从高处俯瞰全局。你珍视自由，不喜欢被束缚，渴望广阔的空间和无限的可能性。你的决策果断，行动迅速，是天生的领导者。虽然你有时显得孤独，但这正是你力量的源泉——在独处中积蓄力量，在飞翔中展现威严。",
+                image: "🦅",
+                scores: { social: -1, energy: 3, mind: 4, risk: 4, environment: 4 }
+            },
+            {
+                name: "大象",
+                traits: ["智慧", "沉稳", "重感情", "记忆力强"],
+                description: "你的灵魂原型是大象！你拥有超越年龄的沉稳与智慧，是群体中的定心丸。你重感情，记忆力强，对家人和朋友极为忠诚。你的力量巨大但从不滥用，总是以温和的方式解决问题。在团队中，你是大家信赖的依靠，你的存在本身就带来安全感。",
+                image: "🐘",
+                scores: { social: 3, energy: 2, mind: 4, risk: 1, environment: 3 }
+            },
+            {
+                name: "熊猫",
+                traits: ["平和", "与世无争", "享受主义", "温和"],
+                description: "你的灵魂原型是熊猫！你平和、与世无争，懂得享受生活的美好。你不喜欢竞争和冲突，宁愿花时间在让自己感到舒适和快乐的事情上。你的温和性格让你成为朋友中的调和剂，大家都喜欢与你相处。虽然你看起来有些懒散，但实际上你很清楚什么对自己最重要。",
+                image: "🐼",
+                scores: { social: 1, energy: -2, mind: 0, risk: -2, environment: -1 }
+            },
+            {
+                name: "猎豹",
+                traits: ["速度", "专注", "爆发力", "日行性"],
+                description: "你的灵魂原型是猎豹！你是速度与专注的化身，一旦锁定目标就会全力以赴。你的爆发力惊人，能够在短时间内完成令人瞩目的成就。你善于把握时机，知道何时该行动，何时该等待。虽然你不擅长持久战，但你的短时效率和精准度无人能及。",
+                image: "🐆",
+                scores: { social: 0, energy: 5, mind: 3, risk: 4, environment: 3 }
+            }
+        ];
+
+        // 全局变量
+        let currentQuestion = 0;
+        let userScores = { social: 0, energy: 0, mind: 0, risk: 0, environment: 0 };
+        let selectedOption = null;
+
+        // DOM元素
+        const introSection = document.getElementById('intro-section');
+        const testSection = document.getElementById('test-section');
+        const resultSection = document.getElementById('result-section');
+        const startBtn = document.getElementById('start-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const currentQuestionSpan = document.getElementById('current-question');
+        const progressBar = document.getElementById('progress-bar');
+        const resultName = document.getElementById('result-name');
+        const resultImage = document.getElementById('result-image');
+        const resultTraits = document.getElementById('result-traits');
+        const resultDescription = document.getElementById('result-description');
+
+        // 事件监听
+        startBtn.addEventListener('click', startTest);
+        nextBtn.addEventListener('click', nextQuestion);
+        restartBtn.addEventListener('click', restartTest);
+
+        // 开始测试
+        function startTest() {
+            introSection.style.display = 'none';
+            testSection.style.display = 'block';
+            showQuestion();
+        }
+
+        // 显示问题
+        function showQuestion() {
+            const question = questions[currentQuestion];
+            questionText.textContent = question.text;
+            optionsContainer.innerHTML = '';
+            
+            currentQuestionSpan.textContent = currentQuestion + 1;
+            progressBar.style.width = `${((currentQuestion + 1) / questions.length) * 100}%`;
+            
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                optionElement.textContent = option.text;
+                optionElement.dataset.index = index;
+                optionElement.addEventListener('click', selectOption);
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            nextBtn.disabled = true;
+            selectedOption = null;
+        }
+
+        // 选择选项
+        function selectOption(e) {
+            // 移除之前的选择
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => option.classList.remove('selected'));
+            
+            // 标记当前选择
+            e.target.classList.add('selected');
+            selectedOption = parseInt(e.target.dataset.index);
+            nextBtn.disabled = false;
+        }
+
+        // 下一题
+        function nextQuestion() {
+            if (selectedOption === null) return;
+            
+            // 更新分数
+            const selectedScores = questions[currentQuestion].options[selectedOption].scores;
+            for (const key in selectedScores) {
+                userScores[key] += selectedScores[key];
+            }
+            
+            // 前进到下一题或显示结果
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                showQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        // 显示结果
+        function showResult() {
+            testSection.style.display = 'none';
+            resultSection.style.display = 'block';
+            
+            // 找到最匹配的动物
+            const matchedAnimal = findClosestAnimal();
+            
+            // 显示结果
+            resultName.textContent = matchedAnimal.name;
+            resultImage.textContent = matchedAnimal.image;
+            resultDescription.textContent = matchedAnimal.description;
+            
+            // 显示特质
+            resultTraits.innerHTML = '';
+            matchedAnimal.traits.forEach(trait => {
+                const traitElement = document.createElement('div');
+                traitElement.className = 'trait';
+                traitElement.textContent = trait;
+                resultTraits.appendChild(traitElement);
+            });
+        }
+
+        // 找到最匹配的动物
+        function findClosestAnimal() {
+            let minDistance = Infinity;
+            let closestAnimal = animals[0];
+            
+            animals.forEach(animal => {
+                let distance = 0;
+                for (const key in userScores) {
+                    distance += Math.pow(userScores[key] - animal.scores[key], 2);
+                }
+                distance = Math.sqrt(distance);
+                
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestAnimal = animal;
+                }
+            });
+            
+            return closestAnimal;
+        }
+
+        // 重新测试
+        function restartTest() {
+            currentQuestion = 0;
+            userScores = { social: 0, energy: 0, mind: 0, risk: 0, environment: 0 };
+            selectedOption = null;
+            
+            resultSection.style.display = 'none';
+            introSection.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
