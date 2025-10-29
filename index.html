@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>动物灵魂原型测试</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .intro {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+            color: #555;
+        }
+        
+        .question-container {
+            margin-bottom: 30px;
+        }
+        
+        .question {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            font-weight: bold;
+            color: #444;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .option {
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f9f9f9;
+        }
+        
+        .option:hover {
+            border-color: #6a11cb;
+            background: #f0f0f0;
+        }
+        
+        .option.selected {
+            border-color: #6a11cb;
+            background: #e6f0ff;
+        }
+        
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .result-container {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .animal-name {
+            font-size: 2.5rem;
+            color: #6a11cb;
+            margin: 20px 0;
+        }
+        
+        .animal-image-container {
+            position: relative;
+            margin: 20px auto;
+            width: 200px;
+            height: 200px;
+        }
+        
+        .animal-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 5px solid #6a11cb;
+            background-color: #f5f5f5;
+        }
+        
+        .animal-emoji {
+            font-size: 80px;
+            width: 100%;
+            height: 100%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+        }
+        
+        .image-loading {
+            width: 100%;
+            height: 100%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+            color: #666;
+            font-size: 14px;
+            border-radius: 50%;
+            border: 2px dashed #ccc;
+        }
+        
+        .animal-description {
+            text-align: left;
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            line-height: 1.8;
+        }
+        
+        .traits {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .trait {
+            background: #e6f0ff;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        /* 新增：维度分析样式 */
+        .dimension-analysis {
+            margin: 30px 0;
+            text-align: left;
+        }
+        
+        .dimension-title {
+            font-size: 1.3rem;
+            color: #6a11cb;
+            margin: 25px 0 15px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e6f0ff;
+        }
+        
+        .dimension-item {
+            background: white;
+            border: 2px solid #e6f0ff;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        
+        .dimension-item:hover {
+            border-color: #6a11cb;
+            box-shadow: 0 5px 15px rgba(106, 17, 203, 0.1);
+        }
+        
+        .dimension-name {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+        
+        .dimension-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        
+        .dimension-bar {
+            height: 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .dimension-progress {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 1s ease-in-out;
+        }
+        
+        .dimension-value {
+            text-align: right;
+            font-size: 0.9rem;
+            color: #666;
+            font-weight: bold;
+        }
+        
+        .strength-weakness {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .strength-box, .weakness-box {
+            padding: 15px;
+            border-radius: 10px;
+            text-align: left;
+        }
+        
+        .strength-box {
+            background: #e8f5e8;
+            border: 2px solid #4CAF50;
+        }
+        
+        .weakness-box {
+            background: #ffe8e8;
+            border: 2px solid #f44336;
+        }
+        
+        .strength-title, .weakness-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .strength-title {
+            color: #2e7d32;
+        }
+        
+        .weakness-title {
+            color: #c62828;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            width: 0%;
+            transition: width 0.5s;
+        }
+        
+        .question-counter {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #666;
+        }
+        
+        .restart-btn {
+            background: #4CAF50;
+            margin-top: 10px;
+        }
+        
+        .reset-btn {
+            background: #dc3545;
+            margin-top: 10px;
+        }
+        
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                border-radius: 10px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .animal-image-container {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .animal-emoji {
+                font-size: 60px;
+            }
+            
+            .strength-weakness {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>动物灵魂原型测试</h1>
+            <p class="subtitle">探索你内心深处的动物本性</p>
+        </header>
+        
+        <div class="content">
+            <div id="intro-section">
+                <div class="intro">
+                    <p>在每个人的灵魂深处，都沉睡着一个古老的动物原型。它塑造着你的本能、你的魅力，甚至是你自己都未察觉的隐藏天赋。</p>
+                    <p>完成这份灵魂问卷，只需回答15个问题，唤醒你的原始力量，看看是哪位"动物守护灵"一直与你同在。</p>
+                    
+                    <!-- 测试次数提醒 -->
+                    <div id="test-limit-warning" class="warning" style="display: none;">
+                        <p><strong>⚠️ 提示</strong></p>
+                        <p>您已经完成过测试了！每个用户只能测试一次。</p>
+                        <p>您上次的结果是：<strong id="previous-result"></strong></p>
+                        <button id="view-previous-result" class="btn">查看上次结果</button>
+                        <button id="reset-test" class="btn reset-btn">重置测试（谨慎使用）</button>
+                    </div>
+                </div>
+                <button id="start-btn" class="btn">开始测试</button>
+            </div>
+            
+            <div id="test-section" style="display: none;">
+                <div class="question-counter">问题 <span id="current-question">1</span>/15</div>
+                <div class="progress-bar">
+                    <div class="progress" id="progress-bar"></div>
+                </div>
+                
+                <div class="question-container">
+                    <div class="question" id="question-text"></div>
+                    <div class="options" id="options-container"></div>
+                </div>
+                
+                <button id="next-btn" class="btn" disabled>下一题</button>
+            </div>
+            
+            <div id="result-section" class="result-container">
+                <h2>你的动物灵魂原型是：</h2>
+                <div class="animal-name" id="result-name"></div>
+                
+                <!-- 图片显示区域 -->
+                <div class="animal-image-container">
+                    <img class="animal-image" id="result-image" src="" alt="动物图片" style="display: none;">
+                    <div class="animal-emoji" id="result-emoji"></div>
+                    <div class="image-loading" id="image-loading">图片加载中...</div>
+                </div>
+                
+                <div class="traits" id="result-traits"></div>
+                <div class="animal-description" id="result-description"></div>
+                
+                <!-- 新增：维度分析区域 -->
+                <div class="dimension-analysis" id="dimension-analysis">
+                    <h3 class="dimension-title">📊 性格维度分析</h3>
+                    
+                    <div class="dimension-item">
+                        <div class="dimension-name">社交倾向</div>
+                        <div class="dimension-description" id="social-description"></div>
+                        <div class="dimension-bar">
+                            <div class="dimension-progress" id="social-progress" style="width: 0%; background: linear-gradient(90deg, #ff6b6b, #ffa726);"></div>
+                        </div>
+                        <div class="dimension-value" id="social-value"></div>
+                    </div>
+                    
+                    <div class="dimension-item">
+                        <div class="dimension-name">能量水平</div>
+                        <div class="dimension-description" id="energy-description"></div>
+                        <div class="dimension-bar">
+                            <div class="dimension-progress" id="energy-progress" style="width: 0%; background: linear-gradient(90deg, #4ecdc4, #45b7d1);"></div>
+                        </div>
+                        <div class="dimension-value" id="energy-value"></div>
+                    </div>
+                    
+                    <div class="dimension-item">
+                        <div class="dimension-name">思维模式</div>
+                        <div class="dimension-description" id="mind-description"></div>
+                        <div class="dimension-bar">
+                            <div class="dimension-progress" id="mind-progress" style="width: 0%; background: linear-gradient(90deg, #96ceb4, #4caf50);"></div>
+                        </div>
+                        <div class="dimension-value" id="mind-value"></div>
+                    </div>
+                    
+                    <div class="dimension-item">
+                        <div class="dimension-name">风险偏好</div>
+                        <div class="dimension-description" id="risk-description"></div>
+                        <div class="dimension-bar">
+                            <div class="dimension-progress" id="risk-progress" style="width: 0%; background: linear-gradient(90deg, #ff9ff3, #f368e0);"></div>
+                        </div>
+                        <div class="dimension-value" id="risk-value"></div>
+                    </div>
+                    
+                    <div class="strength-weakness">
+                        <div class="strength-box">
+                            <div class="strength-title">💪 核心优势与发展方向</div>
+                            <div id="strengths-list"></div>
+                        </div>
+                        <div class="weakness-box">
+                            <div class="weakness-title">🎯 成长建议与时代适应</div>
+                            <div id="weaknesses-list"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button id="restart-btn" class="btn restart-btn">重新测试</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 在页面加载时检查测试状态
+        document.addEventListener('DOMContentLoaded', function() {
+            checkTestStatus();
+        });
+
+        // 测试题目
+        const questions = [
+            {
+                text: "周末早晨，天气极好，你第一件想做的事是？",
+                options: [
+                    { text: "约朋友去户外爬山、骑行或打球。", scores: { social: 2, energy: 2, mind: 0, risk: 1, environment: 1 } },
+                    { text: "一个人去公园、博物馆或市场逛逛，享受独处时光。", scores: { social: -1, energy: 1, mind: 0, risk: 0, environment: 0 } },
+                    { text: "继续赖床，或者窝在沙发里悠闲地吃早餐、刷手机。", scores: { social: -1, energy: -1, mind: 0, risk: -1, environment: -1 } },
+                    { text: "立刻开始执行早已制定好的周末计划。", scores: { social: 0, energy: 1, mind: 1, risk: 0, environment: 1 } }
+                ]
+            },
+            {
+                text: "你的办公桌或书桌通常是怎样的状态？",
+                options: [
+                    { text: "整洁有序，每样东西都有固定位置。", scores: { social: 0, energy: 0, mind: 1, risk: -1, environment: 1 } },
+                    { text: "堆满了东西，但我清楚每一样在哪，这是一种充满创意的‘乱’。", scores: { social: 0, energy: 0, mind: -1, risk: 1, environment: -1 } },
+                    { text: "会放一些家人、朋友或宠物的照片，感觉很温馨。", scores: { social: 1, energy: 0, mind: -1, risk: 0, environment: 0 } },
+                    { text: "极简风格，只放当前必需的物品。", scores: { social: -1, energy: 0, mind: 1, risk: 0, environment: 0 } }
+                ]
+            },
+            {
+                text: "当你感到压力巨大时，什么最能治愈你？",
+                options: [
+                    { text: "找朋友倾诉，或参加热闹的社交活动。", scores: { social: 2, energy: 0, mind: -1, risk: 0, environment: 0 } },
+                    { text: "一个人呆着，通过看书、听音乐或独处来充电。", scores: { social: -2, energy: -1, mind: 0, risk: 0, environment: -1 } },
+                    { text: "投入大自然的怀抱，去爬山、看海或森林浴。", scores: { social: -1, energy: 1, mind: 0, risk: 1, environment: 0 } },
+                    { text: "通过剧烈运动，比如跑步、健身，来释放压力。", scores: { social: 0, energy: 2, mind: 0, risk: 1, environment: 1 } }
+                ]
+            },
+            {
+                text: "旅行前，你会如何做计划？",
+                options: [
+                    { text: "做好详尽的攻略，时间地点精确到小时，不喜欢意外。", scores: { social: 0, energy: 0, mind: 2, risk: -2, environment: 1 } },
+                    { text: "只定大框架，留出大量时间用于随性探索和发现。", scores: { social: 0, energy: 0, mind: -1, risk: 1, environment: 0 } },
+                    { text: "更倾向于和朋友一起，他们定就好，我负责跟随和享受。", scores: { social: 1, energy: -1, mind: -1, risk: 0, environment: -1 } },
+                    { text: "偏爱挑战性的旅程，如徒步、探险，并乐于自己做主。", scores: { social: 0, energy: 1, mind: 0, risk: 2, environment: 1 } }
+                ]
+            },
+            {
+                text: "在社交聚会中，你通常更像：",
+                options: [
+                    { text: "气氛担当，活跃在人群中央，享受被关注。", scores: { social: 2, energy: 1, mind: 0, risk: 1, environment: 1 } },
+                    { text: "深度交流者，只和一两个人进行有意义的谈话。", scores: { social: 0, energy: 0, mind: 0, risk: 0, environment: 0 } },
+                    { text: "观察者，安静地待在角落，看着大家，自得其乐。", scores: { social: -1, energy: -1, mind: 1, risk: -1, environment: -1 } },
+                    { text: "组织者，操心着大家的饮料和情绪，确保没人被冷落。", scores: { social: 1, energy: 0, mind: 1, risk: 0, environment: 1 } }
+                ]
+            },
+            {
+                text: "你更偏爱哪种天气？",
+                options: [
+                    { text: "阳光明媚，温暖甚至炎热的大晴天。", scores: { social: 0, energy: 1, mind: 0, risk: 0, environment: 0 } },
+                    { text: "凉爽的阴天，或者细雨绵绵的日子。", scores: { social: 0, energy: -1, mind: 0, risk: 0, environment: 0 } },
+                    { text: "大雪纷飞，享受室内的温暖与静谧。", scores: { social: -1, energy: -1, mind: 0, risk: -1, environment: -1 } },
+                    { text: "狂风暴雨，喜欢那种能量释放的感觉。", scores: { social: 0, energy: 1, mind: 0, risk: 1, environment: 0 } }
+                ]
+            },
+            {
+                text: "你如何处理一个突如其来的难题？",
+                options: [
+                    { text: "立即行动，在尝试中不断调整方案。", scores: { social: 0, energy: 1, mind: -1, risk: 1, environment: 1 } },
+                    { text: "先冷静下来，系统地分析利弊，找出最优解。", scores: { social: 0, energy: 0, mind: 2, risk: -1, environment: 1 } },
+                    { text: "寻求专家或朋友的建议，集思广益。", scores: { social: 1, energy: 0, mind: 0, risk: 0, environment: 0 } },
+                    { text: "相信自己的直觉和感觉，跟着'心'走。", scores: { social: 0, energy: 0, mind: -1, risk: 0, environment: -1 } }
+                ]
+            },
+            {
+                text: "关于'家'的概念，你最认同以下哪种描述？",
+                options: [
+                    { text: "一个安全的堡垒，完全属于我自己，隔绝外界干扰。", scores: { social: -2, energy: -1, mind: 0, risk: -1, environment: -1 } },
+                    { text: "一个热闹的社交中心，欢迎朋友常来常往。", scores: { social: 2, energy: 1, mind: 0, risk: 0, environment: 1 } },
+                    { text: "一个温暖的港湾，是与家人共享爱与陪伴的地方。", scores: { social: 1, energy: 0, mind: -1, risk: 0, environment: 0 } },
+                    { text: "一个休息站，更重要的是外面的广阔世界。", scores: { social: -1, energy: 1, mind: 0, risk: 1, environment: 0 } }
+                ]
+            },
+            {
+                text: "你更享受哪种类型的假期？",
+                options: [
+                    { text: "在热带海滩上躺着晒太阳，彻底放松。", scores: { social: 0, energy: -2, mind: 0, risk: -1, environment: -1 } },
+                    { text: "穿梭于各大城市，逛遍博物馆、古迹和商场。", scores: { social: 0, energy: 1, mind: 1, risk: 0, environment: 0 } },
+                    { text: "去野生动物园或自然保护区，观察动物。", scores: { social: -1, energy: 0, mind: 1, risk: 0, environment: 0 } },
+                    { text: "参加徒步、露营、滑雪等户外运动假期。", scores: { social: 0, energy: 2, mind: 0, risk: 1, environment: 1 } }
+                ]
+            },
+            {
+                text: "你的消费习惯更接近？",
+                options: [
+                    { text: "有计划地储蓄和消费，对投资理财很感兴趣。", scores: { social: 0, energy: 0, mind: 2, risk: -1, environment: 1 } },
+                    { text: "注重体验，愿意为美食、旅行和爱好花钱。", scores: { social: 0, energy: 0, mind: -1, risk: 1, environment: 0 } },
+                    { text: "乐于为朋友和家人买单，看到他们开心我就开心。", scores: { social: 1, energy: 0, mind: -1, risk: 0, environment: 0 } },
+                    { text: "实用主义，只买需要的，很少冲动消费。", scores: { social: 0, energy: 0, mind: 1, risk: -1, environment: 0 } }
+                ]
+            },
+            {
+                text: "你如何看待规则？",
+                options: [
+                    { text: "规则是用来遵守的，它们让世界更有秩序。", scores: { social: 0, energy: 0, mind: 1, risk: -1, environment: 1 } },
+                    { text: "规则是用来打破的，创新往往发生在框架之外。", scores: { social: 0, energy: 1, mind: 0, risk: 2, environment: 0 } },
+                    { text: "规则是参考，我更关心规则背后的人情与情境。", scores: { social: 0, energy: 0, mind: -1, risk: 0, environment: 0 } },
+                    { text: "只要不影响到我和我在意的人，我并不太关心规则。", scores: { social: -1, energy: 0, mind: 0, risk: 0, environment: -1 } }
+                ]
+            },
+            {
+                text: "你一天中精力最充沛的时间段是？",
+                options: [
+                    { text: "清晨，醒来就充满活力。", scores: { social: 0, energy: 1, mind: 0, risk: 0, environment: 0 } },
+                    { text: "深夜，万籁俱寂时思维最清晰。", scores: { social: -1, energy: 0, mind: 1, risk: 0, environment: -1 } },
+                    { text: "下午到傍晚，需要一个缓慢的启动过程。", scores: { social: 0, energy: 0, mind: 0, risk: 0, environment: 0 } },
+                    { text: "不固定，像猫一样可以随时充电小睡。", scores: { social: 0, energy: -1, mind: 0, risk: 0, environment: 0 } }
+                ]
+            },
+            {
+                text: "朋友对你最可能的评价是？",
+                options: [
+                    { text: "靠谱/稳重，像定心丸一样的存在。", scores: { social: 0, energy: 0, mind: 1, risk: -1, environment: 1 } },
+                    { text: "有趣/有想法，总能看到不一样的角度。", scores: { social: 0, energy: 0, mind: 1, risk: 1, environment: 0 } },
+                    { text: "温暖/贴心，像小太阳一样治愈。", scores: { social: 1, energy: 0, mind: -1, risk: 0, environment: 0 } },
+                    { text: "独立/强大，有自己的一个小世界。", scores: { social: -1, energy: 0, mind: 0, risk: 0, environment: -1 } }
+                ]
+            },
+            {
+                text: "面对一个你非常想要的机会，但竞争激烈，你会？",
+                options: [
+                    { text: "全力以赴，积极准备，志在必得。", scores: { social: 0, energy: 2, mind: 0, risk: 2, environment: 1 } },
+                    { text: "仔细评估胜算，如果太低就可能放弃。", scores: { social: 0, energy: 0, mind: 1, risk: -1, environment: 0 } },
+                    { text: "寻求合作，看看能否和他人组队争取。", scores: { social: 1, energy: 0, mind: 0, risk: 0, environment: 0 } },
+                    { text: "顺其自然，相信‘是我的就是我的’。", scores: { social: 0, energy: -1, mind: 0, risk: -1, environment: -1 } }
+                ]
+            },
+            {
+                text: "如果变成动物，你内心最渴望拥有的是？",
+                options: [
+                    { text: "鹰击长空的自由和俯瞰一切的视野。", scores: { social: -1, energy: 1, mind: 1, risk: 1, environment: 1 } },
+                    { text: "狮群中相互依偎的温暖和强大的力量。", scores: { social: 2, energy: 1, mind: 0, risk: 0, environment: 1 } },
+                    { text: "狐狸般的机智敏捷和优雅神秘的魅力。", scores: { social: 0, energy: 0, mind: 1, risk: 0, environment: 0 } },
+                    { text: "熊猫般的与世无争，被安稳照顾的惬意。", scores: { social: -1, energy: -2, mind: -1, risk: -2, environment: -1 } }
+                ]
+            }
+        ];
+
+        // 动物数据库
+        const animals = [
+            {
+                name: "狼",
+                traits: ["忠诚", "协作", "纪律性", "团队精神"],
+                description: "你的灵魂原型是狼！你重视团队和家庭，拥有强大的忠诚度和协作精神。在群体中，你既可以是坚定的支持者，也可以是强有力的领导者。你的直觉敏锐，能够感知群体的情绪和动态。虽然你享受群体的温暖，但也保持着独立的思考和行动能力。",
+                image: "🐺",
+                imageUrl: "images/animals/狼.png",
+                scores: { social: 5, energy: 4, mind: 3, risk: 3, environment: 4 }
+            },
+            {
+                name: "狮子",
+                traits: ["领袖", "自信", "保护者", "威严"],
+                description: "你的灵魂原型是狮子！你天生具有领导气质，自信而威严。在群体中，你自然而然地承担起保护者和决策者的角色。你的力量不仅体现在行动上，更体现在你给予他人的安全感和方向感。你重视家庭和团队，会不惜一切守护你所在意的人。",
+                image: "🦁",
+                imageUrl: "images/animals/狮子.png",
+                scores: { social: 4, energy: 4, mind: 2, risk: 4, environment: 5 }
+            },
+            {
+                name: "海豚",
+                traits: ["智慧", "友好", "爱玩", "高度社交"],
+                description: "你的灵魂原型是海豚！你聪明、友好且充满活力，是群体中的开心果。你热爱社交，擅长沟通，能够轻松地与各种人建立联系。你的好奇心强，喜欢探索新事物，并且总是带着乐观和玩乐的心态面对生活。你的智慧和适应能力让你在各种环境中都能游刃有余。",
+                image: "🐬",
+                imageUrl: "images/animals/海豚.png",
+                scores: { social: 5, energy: 4, mind: 3, risk: 2, environment: 2 }
+            },
+            {
+                name: "大象",
+                traits: ["智慧", "沉稳", "重感情", "记忆力强"],
+                description: "你的灵魂原型是大象！你拥有超越年龄的沉稳与智慧，是群体中的定心丸。你重感情，记忆力强，对家人和朋友极为忠诚。你的力量巨大但从不滥用，总是以温和的方式解决问题。在团队中，你是大家信赖的依靠，你的存在本身就带来安全感。",
+                image: "🐘",
+                imageUrl: "images/animals/大象.png",
+                scores: { social: 4, energy: 2, mind: 4, risk: 1, environment: 3 }
+            }
+        ];
+
+        // 维度分析描述库
+        const dimensionDescriptions = {
+            social: {
+                high: "你是一个高度社交的个体，在数字时代如鱼得水。你擅长建立和维护人际关系网络，这在当今协作至上的工作环境中是宝贵资产。",
+                medium: "你懂得在虚拟社交和真实连接间找到平衡，既能享受线上社群的便利，也重视面对面的深度交流。",
+                low: "在信息爆炸的时代，你的独立思考能力尤为珍贵。你更倾向于深度专注的工作模式，这在远程办公和自由职业趋势中具有独特优势。"
+            },
+            energy: {
+                high: "你充满创业精神和行动力，适应快节奏的数字化生活。在AI和自动化快速发展的今天，你的适应能力和快速学习是核心竞争力。",
+                medium: "你懂得在高效工作和身心健康间找到平衡，这种可持续的工作方式在追求工作生活融合的现代职场中备受推崇。",
+                low: "你的沉稳和深度思考能力在浮躁的信息时代显得尤为珍贵。你擅长需要持久专注的深度工作，这在创意和研发领域具有独特价值。"
+            },
+            mind: {
+                high: "你强大的逻辑思维能力在数据驱动的决策时代极具优势。在AI辅助分析的时代，你的批判性思维和系统思考能力是稀缺资源。",
+                medium: "你能在理性分析和感性洞察间灵活切换，这种平衡思维在用户体验设计和产品管理等领域具有独特价值。",
+                low: "你的共情能力和人文关怀在技术至上的时代愈发重要。你擅长理解用户情感需求，这在体验经济中是不可替代的优势。"
+            },
+            risk: {
+                high: "你的冒险精神在快速变化的数字经济中极具价值。你善于在不确定性中发现机会，这种能力在创业和创新领域尤为珍贵。",
+                medium: "你懂得在创新和稳定间找到平衡，这种稳健的决策风格在长期价值投资和可持续发展中具有优势。",
+                low: "你的谨慎和风险意识在充满不确定性的时代是宝贵资产。你擅长建立稳固的基础，这在追求可持续增长的商业环境中备受重视。"
+            }
+        };
+
+        // 优势和建议库
+        const adviceLibrary = {
+            strengths: {
+                social: [
+                    "利用你的社交优势建立专业人脉网络，展示专业影响力",
+                    "在远程协作时代，发挥你的团队协调能力，成为虚拟团队的粘合剂",
+                    "运用你的沟通天赋，在跨文化合作中架起沟通桥梁",
+                    "在社群经济中，你的社交能力可以转化为商业价值和品牌影响力"
+                ],
+                energy: [
+                    "在快速迭代的互联网行业，你的行动力是推动项目落地的关键",
+                    "利用你的高能量状态，在AI工具辅助下实现更高的工作效率",
+                    "在创业环境中，你的激情和执行力是吸引投资和团队的重要特质",
+                    "在多变的市场环境中，你的适应能力让你能够快速抓住新机遇"
+                ],
+                mind: [
+                    "在数据科学时代，你的分析能力可以转化为数据驱动的决策优势",
+                    "在AI普及的背景下，你的批判性思维是区分人机协作的关键",
+                    "在复杂系统管理中，你的逻辑思维有助于设计更优化的解决方案",
+                    "在信息过载的时代，你的理性判断是筛选有价值信息的重要能力"
+                ],
+                risk: [
+                    "在科技创新浪潮中，你的冒险精神适合参与前沿技术的探索",
+                    "在数字经济中，你的风险承受能力有助于把握区块链、AI等新兴机会",
+                    "在快速变化的市场中，你的创新思维能够发现蓝海市场",
+                    "在全球化竞争中，你的开拓精神有助于企业国际化布局"
+                ]
+            },
+            weaknesses: {
+                social: [
+                    "在远程办公时代，建议学习使用数字化协作工具来弥补面对面交流的不足",
+                    "关注线上社群的参与，通过专业论坛和虚拟社区建立行业联系",
+                    "尝试参与线上工作坊和虚拟会议，逐步扩展社交舒适区",
+                    "在个人品牌建设中，适度展示专业见解，建立线上影响力"
+                ],
+                energy: [
+                    "在追求可持续发展的趋势下，学习精力管理技巧，避免职业倦怠",
+                    "结合AI自动化工具，将精力集中在高价值的创造性工作上",
+                    "在快节奏工作中，培养冥想等正念练习，保持心智清晰",
+                    "关注深度工作方法，在信息碎片化时代保持专注力"
+                ],
+                mind: [
+                    "在用户体验至上的时代，培养同理心设计思维，理解用户情感需求",
+                    "学习讲故事技巧，在数据驱动决策中融入人文关怀",
+                    "关注情感智能发展，在AI时代强化人类独特的情感理解能力",
+                    "在创新过程中，平衡理性分析与直觉洞察，激发创造力"
+                ],
+                risk: [
+                    "在不确定性时代，学习敏捷方法论，以小步快跑的方式降低风险",
+                    "关注长期主义投资理念，在稳健基础上寻求适度创新",
+                    "学习风险评估工具，在数据支持下做出更明智的决策",
+                    "在职业规划中，建立安全边界的同时保持对新兴趋势的开放性"
+                ]
+            }
+        };
+
+        // 全局变量
+        let currentQuestion = 0;
+        let userScores = { social: 0, energy: 0, mind: 0, risk: 0, environment: 0 };
+        let selectedOption = null;
+
+        // DOM元素
+        const introSection = document.getElementById('intro-section');
+        const testSection = document.getElementById('test-section');
+        const resultSection = document.getElementById('result-section');
+        const startBtn = document.getElementById('start-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const currentQuestionSpan = document.getElementById('current-question');
+        const progressBar = document.getElementById('progress-bar');
+        const resultName = document.getElementById('result-name');
+        const resultImage = document.getElementById('result-image');
+        const resultEmoji = document.getElementById('result-emoji');
+        const imageLoading = document.getElementById('image-loading');
+        const resultTraits = document.getElementById('result-traits');
+        const resultDescription = document.getElementById('result-description');
+        const testLimitWarning = document.getElementById('test-limit-warning');
+        const previousResult = document.getElementById('previous-result');
+        const viewPreviousResult = document.getElementById('view-previous-result');
+        const resetTest = document.getElementById('reset-test');
+
+        // 新增：维度分析DOM元素
+        const socialDescription = document.getElementById('social-description');
+        const energyDescription = document.getElementById('energy-description');
+        const mindDescription = document.getElementById('mind-description');
+        const riskDescription = document.getElementById('risk-description');
+        const socialProgress = document.getElementById('social-progress');
+        const energyProgress = document.getElementById('energy-progress');
+        const mindProgress = document.getElementById('mind-progress');
+        const riskProgress = document.getElementById('risk-progress');
+        const socialValue = document.getElementById('social-value');
+        const energyValue = document.getElementById('energy-value');
+        const mindValue = document.getElementById('mind-value');
+        const riskValue = document.getElementById('risk-value');
+        const strengthsList = document.getElementById('strengths-list');
+        const weaknessesList = document.getElementById('weaknesses-list');
+
+        // 事件监听
+        startBtn.addEventListener('click', startTest);
+        nextBtn.addEventListener('click', nextQuestion);
+        restartBtn.addEventListener('click', restartTest);
+        viewPreviousResult.addEventListener('click', showPreviousResult);
+        resetTest.addEventListener('click', resetTestData);
+
+        // 检查测试状态
+        function checkTestStatus() {
+            const hasTested = localStorage.getItem('animalTestCompleted');
+            const testResult = localStorage.getItem('animalTestResult');
+            
+            if (hasTested === 'true' && testResult) {
+                const result = JSON.parse(testResult);
+                testLimitWarning.style.display = 'block';
+                previousResult.textContent = result.name;
+                startBtn.style.display = 'none';
+            }
+        }
+
+        // 开始测试
+        function startTest() {
+            introSection.style.display = 'none';
+            testSection.style.display = 'block';
+            showQuestion();
+        }
+
+        // 显示问题
+        function showQuestion() {
+            const question = questions[currentQuestion];
+            questionText.textContent = question.text;
+            optionsContainer.innerHTML = '';
+            
+            currentQuestionSpan.textContent = currentQuestion + 1;
+            progressBar.style.width = `${((currentQuestion + 1) / questions.length) * 100}%`;
+            
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                optionElement.textContent = option.text;
+                optionElement.dataset.index = index;
+                optionElement.addEventListener('click', selectOption);
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            nextBtn.disabled = true;
+            selectedOption = null;
+        }
+
+        // 选择选项
+        function selectOption(e) {
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => option.classList.remove('selected'));
+            
+            e.target.classList.add('selected');
+            selectedOption = parseInt(e.target.dataset.index);
+            nextBtn.disabled = false;
+        }
+
+        // 下一题
+        function nextQuestion() {
+            if (selectedOption === null) return;
+            
+            const selectedScores = questions[currentQuestion].options[selectedOption].scores;
+            for (const key in selectedScores) {
+                userScores[key] += selectedScores[key];
+            }
+            
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                showQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        // 显示结果
+        function showResult() {
+            testSection.style.display = 'none';
+            resultSection.style.display = 'block';
+            
+            const matchedAnimal = findClosestAnimal();
+            
+            resultName.textContent = matchedAnimal.name;
+            resultDescription.textContent = matchedAnimal.description;
+            
+            // 图片显示逻辑
+            resultImage.style.display = 'none';
+            resultEmoji.style.display = 'none';
+            imageLoading.style.display = 'flex';
+            
+            if (matchedAnimal.imageUrl) {
+                const img = new Image();
+                
+                img.onload = function() {
+                    imageLoading.style.display = 'none';
+                    resultImage.src = matchedAnimal.imageUrl;
+                    resultImage.alt = matchedAnimal.name;
+                    resultImage.style.display = 'block';
+                };
+                
+                img.onerror = function() {
+                    imageLoading.style.display = 'none';
+                    resultEmoji.textContent = matchedAnimal.image;
+                    resultEmoji.style.display = 'flex';
+                };
+                
+                img.src = matchedAnimal.imageUrl;
+            } else {
+                imageLoading.style.display = 'none';
+                resultEmoji.textContent = matchedAnimal.image;
+                resultEmoji.style.display = 'flex';
+            }
+            
+            // 显示特质
+            resultTraits.innerHTML = '';
+            matchedAnimal.traits.forEach(trait => {
+                const traitElement = document.createElement('div');
+                traitElement.className = 'trait';
+                traitElement.textContent = trait;
+                resultTraits.appendChild(traitElement);
+            });
+            
+            // 显示维度分析
+            showDimensionAnalysis();
+            
+            // 保存测试状态
+            localStorage.setItem('animalTestCompleted', 'true');
+            localStorage.setItem('animalTestResult', JSON.stringify(matchedAnimal));
+            localStorage.setItem('animalTestDate', new Date().toISOString());
+            localStorage.setItem('userScores', JSON.stringify(userScores));
+        }
+
+        // 显示维度分析
+        function showDimensionAnalysis() {
+            // 计算每个维度的百分比（-5到5映射到0-100%）
+            const socialPercent = ((userScores.social + 5) / 10) * 100;
+            const energyPercent = ((userScores.energy + 5) / 10) * 100;
+            const mindPercent = ((userScores.mind + 5) / 10) * 100;
+            const riskPercent = ((userScores.risk + 5) / 10) * 100;
+            
+            // 设置进度条
+            setTimeout(() => {
+                socialProgress.style.width = socialPercent + '%';
+                energyProgress.style.width = energyPercent + '%';
+                mindProgress.style.width = mindPercent + '%';
+                riskProgress.style.width = riskPercent + '%';
+            }, 100);
+            
+            // 设置数值显示
+            socialValue.textContent = getLevelText(userScores.social);
+            energyValue.textContent = getLevelText(userScores.energy);
+            mindValue.textContent = getLevelText(userScores.mind);
+            riskValue.textContent = getLevelText(userScores.risk);
+            
+            // 设置描述
+            socialDescription.textContent = getDimensionDescription('social', userScores.social);
+            energyDescription.textContent = getDimensionDescription('energy', userScores.energy);
+            mindDescription.textContent = getDimensionDescription('mind', userScores.mind);
+            riskDescription.textContent = getDimensionDescription('risk', userScores.risk);
+            
+            // 设置优势和建议
+            showAdvice();
+        }
+
+        // 获取维度水平文本
+        function getLevelText(score) {
+            if (score >= 3) return "非常高";
+            if (score >= 1) return "较高";
+            if (score >= -1) return "中等";
+            if (score >= -3) return "较低";
+            return "非常低";
+        }
+
+        // 获取维度描述
+        function getDimensionDescription(dimension, score) {
+            if (score >= 2) return dimensionDescriptions[dimension].high;
+            if (score >= -2) return dimensionDescriptions[dimension].medium;
+            return dimensionDescriptions[dimension].low;
+        }
+
+        // 新增：职业发展建议库
+        const careerAdvice = {
+            highSocial: [
+                "产品经理、社群运营、人力资源、客户成功等需要强沟通的岗位",
+                "考虑向管理咨询、培训师、公关等方向发展",
+                "在远程协作趋势下，可专注虚拟团队管理和线上社群建设"
+            ],
+            lowSocial: [
+                "研发工程师、数据分析师、内容创作者等深度工作型职业",
+                "考虑远程工作或自由职业，充分发挥独立工作优势",
+                "在AI辅助下，专注需要深度思考的技术或创意工作"
+            ],
+            highEnergy: [
+                "创业公司、项目管理、销售、市场等快节奏岗位",
+                "在新兴科技领域寻找机会，如AI应用、数字化转型项目",
+                "考虑多项目并行的工作模式，充分发挥多任务处理能力"
+            ],
+            lowEnergy: [
+                "研究分析、品质管理、技术支持等需要耐心的岗位",
+                "在可持续发展、ESG投资等长期价值领域发展",
+                "考虑弹性工作制，按照自己的节奏安排深度工作"
+            ],
+            highMind: [
+                "数据科学家、战略分析、金融分析、系统架构等理性岗位",
+                "在AI伦理、算法治理等新兴领域发挥批判性思维",
+                "考虑向投资分析、风险管理等需要严谨思维的方向发展"
+            ],
+            lowMind: [
+                "用户体验设计、心理咨询、内容策划、品牌营销等感性岗位",
+                "在创意经济、体验设计等需要人文关怀的领域发展",
+                "考虑向教育、医疗等需要强共情能力的服务行业发展"
+            ],
+            highRisk: [
+                "风险投资、创业、创新项目管理、市场拓展等岗位",
+                "在区块链、元宇宙等前沿科技领域寻找机会",
+                "考虑参与企业内部创新项目或孵化器工作"
+            ],
+            lowRisk: [
+                "审计、合规、项目管理、运营管理等稳健型岗位",
+                "在政府机构、公共服务、基础设施建设等领域发展",
+                "考虑向流程优化、品质管控等需要细致耐心的工作"
+            ]
+        };
+
+        // 新增：时代趋势建议
+        const trendAdvice = {
+            digitalTransformation: [
+                "学习数字化工具的使用，提升在远程协作环境中的竞争力",
+                "关注AI辅助决策，将人类直觉与机器智能相结合",
+                "在元宇宙和虚拟现实发展中，寻找新的职业机会"
+            ],
+            sustainability: [
+                "关注ESG（环境、社会、治理）投资和绿色经济趋势",
+                "在碳中和目标下，探索新能源、环保科技等新兴领域",
+                "学习可持续商业模式设计，为企业长期价值贡献力量"
+            ],
+            mentalHealth: [
+                "在高压工作环境下，重视心理健康和压力管理",
+                "学习正念冥想等技巧，在数字过载时代保持内心平静",
+                "关注工作生活融合，建立健康的数字边界"
+            ],
+            lifelongLearning: [
+                "建立持续学习的习惯，适应快速变化的技术环境",
+                "关注微证书和技能认证，提升职业竞争力",
+                "在AI时代，重点发展人类独特的创造力和情感智能"
+            ]
+        };
+
+        // 改进的显示优势和建议函数
+        function showAdvice() {
+            strengthsList.innerHTML = '';
+            weaknessesList.innerHTML = '';
+            
+            const selectedStrengths = [];
+            const selectedWeaknesses = [];
+            const careerSuggestions = [];
+            const trendSuggestions = new Set();
+            
+            // 分析每个维度，给出具体建议
+            analyzeDimension('social', selectedStrengths, selectedWeaknesses, careerSuggestions);
+            analyzeDimension('energy', selectedStrengths, selectedWeaknesses, careerSuggestions);
+            analyzeDimension('mind', selectedStrengths, selectedWeaknesses, careerSuggestions);
+            analyzeDimension('risk', selectedStrengths, selectedWeaknesses, careerSuggestions);
+            
+            // 添加时代趋势建议
+            addTrendAdvice(trendSuggestions);
+            
+            // 填充优势列表
+            selectedStrengths.forEach((strength, index) => {
+                if (index < 3) {
+                    const li = document.createElement('div');
+                    li.innerHTML = '🚀 ' + strength;
+                    li.style.marginBottom = '8px';
+                    li.style.padding = '5px';
+                    li.style.background = 'linear-gradient(135deg, #e8f5e8, #c8e6c9)';
+                    li.style.borderRadius = '5px';
+                    strengthsList.appendChild(li);
+                }
+            });
+            
+            // 填充职业建议
+            const careerBox = document.createElement('div');
+            careerBox.innerHTML = '<div style="font-weight: bold; color: #1976d2; margin: 15px 0 8px 0;">💼 职业发展建议</div>';
+            careerSuggestions.slice(0, 3).forEach(suggestion => {
+                const li = document.createElement('div');
+                li.innerHTML = '• ' + suggestion;
+                li.style.marginBottom = '6px';
+                li.style.color = '#555';
+                careerBox.appendChild(li);
+            });
+            strengthsList.appendChild(careerBox);
+            
+            // 填充成长建议
+            selectedWeaknesses.forEach((weakness, index) => {
+                if (index < 3) {
+                    const li = document.createElement('div');
+                    li.innerHTML = '🎯 ' + weakness;
+                    li.style.marginBottom = '8px';
+                    li.style.padding = '5px';
+                    li.style.background = 'linear-gradient(135deg, #ffebee, #ffcdd2)';
+                    li.style.borderRadius = '5px';
+                    weaknessesList.appendChild(li);
+                }
+            });
+            
+            // 填充时代趋势建议
+            const trendBox = document.createElement('div');
+            trendBox.innerHTML = '<div style="font-weight: bold; color: #7b1fa2; margin: 15px 0 8px 0;">🌍 时代趋势适应</div>';
+            Array.from(trendSuggestions).slice(0, 3).forEach(suggestion => {
+                const li = document.createElement('div');
+                li.innerHTML = '📈 ' + suggestion;
+                li.style.marginBottom = '6px';
+                li.style.color = '#555';
+                trendBox.appendChild(li);
+            });
+            weaknessesList.appendChild(trendBox);
+        }
+
+        // 分析单个维度
+        function analyzeDimension(dimension, strengths, weaknesses, careerSuggestions) {
+            const score = userScores[dimension];
+            
+            if (score >= 3) {
+                // 高分优势
+                const randomStrength = adviceLibrary.strengths[dimension][
+                    Math.floor(Math.random() * adviceLibrary.strengths[dimension].length)
+                ];
+                strengths.push(randomStrength);
+                
+                // 职业建议
+                const careerKey = `high${dimension.charAt(0).toUpperCase() + dimension.slice(1)}`;
+                if (careerAdvice[careerKey]) {
+                    careerSuggestions.push(...careerAdvice[careerKey].slice(0, 1));
+                }
+                
+            } else if (score <= -3) {
+                // 低分优势（反向优势）
+                const reverseStrength = getReverseStrength(dimension);
+                strengths.push(reverseStrength);
+                
+                // 职业建议
+                const careerKey = `low${dimension.charAt(0).toUpperCase() + dimension.slice(1)}`;
+                if (careerAdvice[careerKey]) {
+                    careerSuggestions.push(...careerAdvice[careerKey].slice(0, 1));
+                }
+                
+            } else {
+                // 中等分数的平衡建议
+                strengths.push(`在${getDimensionName(dimension)}方面保持良好平衡`);
+            }
+            
+            // 成长建议（针对极端分数）
+            if (Math.abs(score) >= 3) {
+                const randomWeakness = adviceLibrary.weaknesses[dimension][
+                    Math.floor(Math.random() * adviceLibrary.weaknesses[dimension].length)
+                ];
+                weaknesses.push(randomWeakness);
+            }
+        }
+
+        // 获取维度中文名称
+        function getDimensionName(dimension) {
+            const names = {
+                social: '社交能力',
+                energy: '能量管理',
+                mind: '思维方式',
+                risk: '风险应对'
+            };
+            return names[dimension] || dimension;
+        }
+
+        // 获取反向优势（低分时的独特优势）
+        function getReverseStrength(dimension) {
+            const reverseStrengths = {
+                social: "独立工作的专注力在远程办公时代极具价值",
+                energy: "沉稳持久的工作风格适合需要深度专注的领域",
+                mind: "敏锐的直觉和共情能力在体验经济中备受重视",
+                risk: "稳健谨慎的决策风格在不确定性时代是宝贵资产"
+            };
+            return reverseStrengths[dimension] || "在这一维度具有独特的平衡优势";
+        }
+
+        // 添加时代趋势建议
+        function addTrendAdvice(trendSuggestions) {
+            // 根据用户特征推荐相关趋势
+            if (userScores.energy >= 2) {
+                trendSuggestions.add(trendAdvice.digitalTransformation[0]);
+            }
+            if (userScores.mind >= 2) {
+                trendSuggestions.add(trendAdvice.lifelongLearning[0]);
+            }
+            if (userScores.social <= -2) {
+                trendSuggestions.add(trendAdvice.mentalHealth[1]);
+            }
+            
+            // 通用趋势建议
+            trendSuggestions.add(trendAdvice.lifelongLearning[2]);
+            trendSuggestions.add(trendAdvice.sustainability[1]);
+        }
+
+        // 找到最匹配的动物
+        function findClosestAnimal() {
+            let minDistance = Infinity;
+            let closestAnimal = animals[0];
+            
+            animals.forEach(animal => {
+                let distance = 0;
+                for (const key in userScores) {
+                    distance += Math.pow(userScores[key] - animal.scores[key], 2);
+                }
+                distance = Math.sqrt(distance);
+                
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestAnimal = animal;
+                }
+            });
+            
+            return closestAnimal;
+        }
+
+        // 显示上次结果
+        function showPreviousResult() {
+            const testResult = JSON.parse(localStorage.getItem('animalTestResult'));
+            const savedScores = JSON.parse(localStorage.getItem('userScores'));
+            
+            if (testResult) {
+                introSection.style.display = 'none';
+                resultSection.style.display = 'block';
+                
+                resultName.textContent = testResult.name;
+                resultDescription.textContent = testResult.description;
+                
+                // 图片显示逻辑
+                resultImage.style.display = 'none';
+                resultEmoji.style.display = 'none';
+                imageLoading.style.display = 'flex';
+                
+                if (testResult.imageUrl) {
+                    const img = new Image();
+                    
+                    img.onload = function() {
+                        imageLoading.style.display = 'none';
+                        resultImage.src = testResult.imageUrl;
+                        resultImage.alt = testResult.name;
+                        resultImage.style.display = 'block';
+                    };
+                    
+                    img.onerror = function() {
+                        imageLoading.style.display = 'none';
+                        resultEmoji.textContent = testResult.image;
+                        resultEmoji.style.display = 'flex';
+                    };
+                    
+                    img.src = testResult.imageUrl;
+                } else {
+                    imageLoading.style.display = 'none';
+                    resultEmoji.textContent = testResult.image;
+                    resultEmoji.style.display = 'flex';
+                }
+                
+                // 显示特质
+                resultTraits.innerHTML = '';
+                testResult.traits.forEach(trait => {
+                    const traitElement = document.createElement('div');
+                    traitElement.className = 'trait';
+                    traitElement.textContent = trait;
+                    resultTraits.appendChild(traitElement);
+                });
+                
+                // 显示维度分析（如果有保存的分数）
+                if (savedScores) {
+                    userScores = savedScores;
+                    showDimensionAnalysis();
+                }
+            }
+        }
+
+        // 重置测试数据
+        function resetTestData() {
+            if (confirm('确定要重置测试吗？这将清除您之前的测试结果，您可以重新进行测试。')) {
+                localStorage.removeItem('animalTestCompleted');
+                localStorage.removeItem('animalTestResult');
+                localStorage.removeItem('animalTestDate');
+                localStorage.removeItem('userScores');
+                location.reload();
+            }
+        }
+
+        // 重新测试
+        function restartTest() {
+            currentQuestion = 0;
+            userScores = { social: 0, energy: 0, mind: 0, risk: 0, environment: 0 };
+            selectedOption = null;
+            
+            resultSection.style.display = 'none';
+            introSection.style.display = 'block';
+            
+            // 重新显示开始按钮
+            startBtn.style.display = 'block';
+            testLimitWarning.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
